@@ -10,6 +10,10 @@ import (
 
 const UPDATES_TIMEOUT = 60
 
+const COMMAND_ADD = "add"
+const COMMAND_LIST = "list"
+const COMMAND_CLOSE = "close"
+
 
 func main() {
 	log.Println("Trying to read 'token' file")
@@ -30,12 +34,32 @@ func main() {
 
 //Logic of messages handling
 func handleUpdate(update telegramBot.Update, bot *telegramBot.BotAPI) {
-	log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+	//log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
-	msg := telegramBot.NewMessage(update.Message.Chat.ID, update.Message.Text)
-	msg.ReplyToMessageID = update.Message.MessageID
+	message := update.Message
 
-	bot.Send(msg)
+	if message.IsCommand() {
+		//commandArguments := message.CommandArguments()
+
+		switch command := message.Command(); command {
+		case COMMAND_ADD:
+
+		case COMMAND_LIST:
+
+		case COMMAND_CLOSE:
+
+		default:
+			sendReply(update, bot,
+				fmt.Sprintf("I can't understart command '%s'", command))
+		}
+	}
+}
+
+func sendReply(update telegramBot.Update, bot *telegramBot.BotAPI, text string) {
+	replyMessage := telegramBot.NewMessage(update.Message.Chat.ID, text)
+	replyMessage.ReplyToMessageID = update.Message.MessageID
+
+	bot.Send(replyMessage)
 }
 
 func getUpdatesChan(bot *telegramBot.BotAPI) <- chan telegramBot.Update {
@@ -57,7 +81,7 @@ func getBot(token string) *telegramBot.BotAPI {
 		log.Panic(err)
 	}
 
-	bot.Debug = true
+	//bot.Debug = true
 
 	return bot
 }

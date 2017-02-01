@@ -16,8 +16,6 @@ const COMMAND_ADD = "add"
 const COMMAND_LIST = "list"
 const COMMAND_CLOSE = "close"
 
-var botApi *telegramBotApi.BotAPI
-
 type Request struct {
 	name   string
 	closed bool
@@ -113,7 +111,7 @@ func getBot() *Bot {
 	token := readTokenFile()
 	log.Println("Token acquired")
 
-	botApi = getBotApi(token)
+	botApi := getBotApi(token)
 	log.Printf("Authorized on account %s", botApi.Self.UserName)
 
 	bot := &Bot{botApi: botApi}

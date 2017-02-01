@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
-	"os"
 	"bufio"
+	"bytes"
 	"fmt"
 	telegramBotApi "gopkg.in/telegram-bot-api.v4"
-	"bytes"
+	"log"
+	"os"
 	"strconv"
 )
 
@@ -19,12 +19,8 @@ const COMMAND_CLOSE = "close"
 var botApi *telegramBotApi.BotAPI
 
 type Request struct {
-	name string
+	name   string
 	closed bool
-}
-
-func (request Request) String() string {
-	return request.name
 }
 
 type Bot struct {
@@ -67,6 +63,11 @@ func handleUpdate(update telegramBotApi.Update, bot *Bot) {
 		}
 	}
 }
+
+func (request Request) String() string {
+	return request.name
+}
+
 func (bot *Bot) closeRequest(rawRequestNum string) string {
 	requestNum, err := strconv.Atoi(rawRequestNum)
 	if err != nil {
@@ -94,7 +95,7 @@ func (bot *Bot) getRequestsText() string {
 
 	var buffer bytes.Buffer
 
-	for number, request := range bot.requests{
+	for number, request := range bot.requests {
 		if !request.closed {
 			buffer.WriteString(fmt.Sprintf("%d: %s\n", number, request))
 		}
@@ -111,7 +112,7 @@ func getBot() *Bot {
 	botApi = getBotApi(token)
 	log.Printf("Authorized on account %s", botApi.Self.UserName)
 
-	bot := &Bot{botApi:botApi}
+	bot := &Bot{botApi: botApi}
 	return bot
 }
 
@@ -136,7 +137,7 @@ func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
 }
 
 func (bot *Bot) addRequest(name string) string {
-	request := &Request{name:name}
+	request := &Request{name: name}
 	bot.requests = append(bot.requests, request)
 
 	return fmt.Sprintf("Request '%s' added", name)

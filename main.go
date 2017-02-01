@@ -7,6 +7,7 @@ import (
 	"fmt"
 	telegramBotApi "gopkg.in/telegram-bot-api.v4"
 	"bytes"
+	"strconv"
 )
 
 const UPDATES_TIMEOUT = 60
@@ -19,10 +20,15 @@ var botApi *telegramBotApi.BotAPI
 
 type Request struct {
 	name string
+	closed bool
+}
+
+func (request Request) String() string {
+	return request.name
 }
 
 type Bot struct {
-	requests []Request
+	requests []*Request
 	botApi   *telegramBotApi.BotAPI
 }
 
@@ -49,17 +55,38 @@ func handleUpdate(update telegramBotApi.Update, bot *Bot) {
 
 		switch command := message.Command(); command {
 		case COMMAND_ADD:
-			bot.addRequest(commandArguments)
-			bot.sendReply(update, fmt.Sprintf("Request '%s' added", commandArguments))
+			result := bot.addRequest(commandArguments)
+			bot.sendReply(update, result)
 		case COMMAND_LIST:
 			bot.sendReply(update, bot.getRequestsText())
 		case COMMAND_CLOSE:
-			bot.sendReply(update, "Not implemented yet =)")
+			result := bot.closeRequest(commandArguments)
+			bot.sendReply(update, result)
 		default:
 			bot.sendReply(update, fmt.Sprintf("I can't understart command '%s'", command))
 		}
 	}
 }
+func (bot *Bot) closeRequest(rawRequestNum string) string {
+	requestNum, err := strconv.Atoi(rawRequestNum)
+	if err != nil {
+		return err.Error()
+	}
+
+	if requestNum < 0 || requestNum > len(bot.requests) {
+		return "Incorrect request number"
+	}
+
+	request := bot.requests[requestNum]
+	if request.closed {
+		return fmt.Sprintf("Request '%s' is already closed", request)
+	}
+
+	request.closed = true
+	//bot.requests = append(bot.requests[:requestNum], bot.requests[requestNum+1])
+	return fmt.Sprintf("Request '%s' closed", request)
+}
+
 func (bot *Bot) getRequestsText() string {
 	if len(bot.requests) == 0 {
 		return "No active requests at the moment"
@@ -68,7 +95,9 @@ func (bot *Bot) getRequestsText() string {
 	var buffer bytes.Buffer
 
 	for number, request := range bot.requests{
-		buffer.WriteString(fmt.Sprintf("%d: %s\n", number, request.name))
+		if !request.closed {
+			buffer.WriteString(fmt.Sprintf("%d: %s\n", number, request))
+		}
 	}
 
 	return buffer.String()
@@ -78,8 +107,10 @@ func getBot() *Bot {
 	log.Println("Trying to read 'token' file")
 	token := readTokenFile()
 	log.Println("Token acquired")
+
 	botApi = getBotApi(token)
 	log.Printf("Authorized on account %s", botApi.Self.UserName)
+
 	bot := &Bot{botApi:botApi}
 	return bot
 }
@@ -104,9 +135,11 @@ func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
 	return updates
 }
 
-func (bot *Bot) addRequest(name string) {
-	request := Request{name}
+func (bot *Bot) addRequest(name string) string {
+	request := &Request{name:name}
 	bot.requests = append(bot.requests, request)
+
+	return fmt.Sprintf("Request '%s' added", name)
 }
 
 func getBotApi(token string) *telegramBotApi.BotAPI {

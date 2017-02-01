@@ -69,9 +69,13 @@ func (request Request) String() string {
 }
 
 func (bot *Bot) closeRequest(rawRequestNum string) string {
+	if len(rawRequestNum) == 0 {
+		return "Request number to close required"
+	}
+
 	requestNum, err := strconv.Atoi(rawRequestNum)
 	if err != nil {
-		return err.Error()
+		return fmt.Sprintf("Request number to close required, but got error: %s", err.Error())
 	}
 
 	if requestNum < 0 || requestNum > len(bot.requests) {
@@ -136,11 +140,15 @@ func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
 	return updates
 }
 
-func (bot *Bot) addRequest(name string) string {
-	request := &Request{name: name}
+func (bot *Bot) addRequest(requestString string) string {
+	if len(requestString) == 0 {
+		return "Empty request won't be added"
+	}
+
+	request := &Request{name: requestString}
 	bot.requests = append(bot.requests, request)
 
-	return fmt.Sprintf("Request '%s' added", name)
+	return fmt.Sprintf("Request '%s' added", request)
 }
 
 func getBotApi(token string) *telegramBotApi.BotAPI {

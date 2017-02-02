@@ -5,44 +5,54 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestBotRequestAdd(t *testing.T) {
+const REQUEST_ONE = "request one"
+const REQUEST_TWO = "request two"
+
+const REQUEST_OPEN = "open request"
+
+const REQUEST_TO_BE_CLOSED = "request to be closed"
+
+func TestBotRequestsAddOne(t *testing.T) {
 	bot := &Bot{}
 
-	//test one
-	requestOne := "request one"
-	bot.addRequest(requestOne)
+	bot.addRequest(REQUEST_ONE)
 
 	require.Len(t, bot.requests, 1)
+}
 
-	//test two
-	requestTwo := "request two"
-	bot.addRequest(requestTwo)
+func TestBotRequestsAddMultiple(t *testing.T) {
+	bot := &Bot{}
+
+	bot.addRequest(REQUEST_ONE)
+	bot.addRequest(REQUEST_TWO)
 
 	require.Len(t, bot.requests, 2)
+}
 
-	//test three
+func TestBotRequestsToText(t *testing.T) {
+	bot := &Bot{}
+
+	bot.addRequest(REQUEST_ONE)
+	bot.addRequest(REQUEST_TWO)
+
 	requestsText := bot.getRequestsText()
 	t.Log("requestsText:", requestsText)
-	require.Contains(t, requestsText, requestOne)
-	require.Contains(t, requestsText, requestTwo)
+
+	require.Contains(t, requestsText, REQUEST_ONE)
+	require.Contains(t, requestsText, REQUEST_TWO)
 }
 
 func TestBotCloseRequest(t *testing.T) {
 	bot := &Bot{}
 
-	requestOpen := "open request"
-	bot.addRequest(requestOpen)
+	bot.addRequest(REQUEST_OPEN)
+	bot.addRequest(REQUEST_TO_BE_CLOSED)
 
-	requestToBeClosed := "request to be closed"
-	bot.addRequest(requestToBeClosed)
-
-	requestNumberToBeClosed := "1" //count from 0
-	bot.closeRequest(requestNumberToBeClosed)
+	bot.closeRequest("1") //count from 0
 
 	requestsText := bot.getRequestsText()
 	t.Log("requestsText:", requestsText)
 
-	//check
-	require.Contains(t, requestsText, requestOpen)
-	require.NotContains(t, requestsText, requestToBeClosed)
+	require.Contains(t, requestsText, REQUEST_OPEN)
+	require.NotContains(t, requestsText, REQUEST_TO_BE_CLOSED)
 }

@@ -22,7 +22,7 @@ type Request struct {
 
 
 func main() {
-	bot := getBot()
+	bot := getPersistentBot()
 
 	for update := range bot.getUpdatesChan() {
 		if update.Message == nil {
@@ -36,7 +36,7 @@ func main() {
 }
 
 //Logic of messages handling
-func handleUpdate(update telegramBotApi.Update, bot *Bot) {
+func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 	//log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 	message := update.Message
 
@@ -45,12 +45,12 @@ func handleUpdate(update telegramBotApi.Update, bot *Bot) {
 
 		switch command := message.Command(); command {
 		case COMMAND_ADD:
-			result := bot.addRequest(commandArguments)
+			result, _ := bot.addRequest(commandArguments)
 			bot.sendReply(update, result)
 		case COMMAND_LIST:
 			bot.sendReply(update, bot.getRequestsText())
 		case COMMAND_CLOSE:
-			result := bot.closeRequest(commandArguments)
+			result, _ := bot.closeRequest(commandArguments)
 			bot.sendReply(update, result)
 		default:
 			bot.sendReply(update, fmt.Sprintf("I can't understart command '%s'", command))

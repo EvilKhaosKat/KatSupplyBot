@@ -6,14 +6,19 @@ import (
 	"fmt"
 	"bytes"
 	"strconv"
-	"github.com/asdine/storm"
 )
+
+type BotCommunicationInterface interface {
+	addRequest(requestString string) (string, *Request)
+	getRequestsText() string
+	closeRequest(rawRequestNum string) (string, *Request)
+
+	sendReply(update telegramBotApi.Update, text string)
+}
 
 type Bot struct {
 	requests []*Request
 	botApi   *telegramBotApi.BotAPI
-
-	db       *storm.DB
 }
 
 func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
@@ -36,23 +41,15 @@ func (bot *Bot) sendReply(update telegramBotApi.Update, text string) {
 	bot.botApi.Send(replyMessage)
 }
 
-func (bot *Bot) addRequest(requestString string) string {
+func (bot *Bot) addRequest(requestString string) (string, *Request) {
 	if len(requestString) == 0 {
-		return "Empty request won't be added"
+		return "Empty request won't be added", nil
 	}
 
 	request := &Request{Name: requestString}
-
 	bot.requests = append(bot.requests, request)
-	bot.saveRequestToDb(request)
 
-	return fmt.Sprintf("Request '%s' added", request)
-}
-
-func (bot *Bot) saveRequestToDb(request *Request) {
-	if bot.db != nil {
-		bot.db.Save(request)
-	}
+	return fmt.Sprintf("Request '%s' added", request), request
 }
 
 func (bot *Bot) getRequestsText() string {
@@ -71,44 +68,36 @@ func (bot *Bot) getRequestsText() string {
 	return buffer.String()
 }
 
-func (bot *Bot) closeRequest(rawRequestNum string) string {
+func (bot *Bot) closeRequest(rawRequestNum string) (string, *Request) {
 	if len(rawRequestNum) == 0 {
-		return "Request number to close required"
+		return "Request number to close required", nil
 	}
 
 	requestNum, err := strconv.Atoi(rawRequestNum)
 	if err != nil {
-		return fmt.Sprintf("Request number to close required, but got error: %s", err.Error())
+		return fmt.Sprintf("Request number to close required, but got error: %s", err.Error()), nil
 	}
 
 	if requestNum < 0 || requestNum > len(bot.requests) {
-		return "Incorrect request number"
+		return "Incorrect request number", nil
 	}
 
 	request := bot.requests[requestNum]
 	if request.Closed {
-		return fmt.Sprintf("Request '%s' is already closed", request)
+		return fmt.Sprintf("Request '%s' is already closed", request), nil
 	}
 
 	request.Closed = true
-	bot.saveRequestToDb(request)
 
-	return fmt.Sprintf("Request '%s' closed", request)
+	return fmt.Sprintf("Request '%s' closed", request), request
 }
 
 func (bot *Bot) FinishWork() {
-	bot.db.Close()
+	log.Println("Bot finishes it's work")
 }
 
-func (bot *Bot) initRequestsFromDb() {
-	var requests []*Request
-
-	err := bot.db.All(&requests)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	bot.requests = requests
+func (bot *Bot) init() {
+	log.Println("Bot initialization")
 }
 
 func getBotApi(token string) *telegramBotApi.BotAPI {
@@ -130,8 +119,16 @@ func getBot() *Bot {
 	botApi := getBotApi(token)
 	log.Printf("Authorized on account %s", botApi.Self.UserName)
 
-	bot := &Bot{botApi: botApi, db: initDb()}
-	bot.initRequestsFromDb()
+	bot := &Bot{botApi: botApi}
 
 	return bot
+}
+
+func getPersistentBot() *PersistentBot {
+	bot := getBot()
+
+	persistentBot := PersistentBot{Bot: bot, db: initDb()}
+	persistentBot.init()
+
+	return &persistentBot
 }

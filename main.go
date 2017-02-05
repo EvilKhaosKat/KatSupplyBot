@@ -45,15 +45,15 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 
 		switch command := message.Command(); command {
 		case COMMAND_ADD:
-			result, _ := bot.addRequest(commandArguments)
-			bot.sendReply(update, result)
+			result, _ := bot.AddRequest(commandArguments)
+			bot.SendReply(update, result)
 		case COMMAND_LIST:
-			bot.sendReply(update, bot.getRequestsText())
+			bot.SendReply(update, bot.GetRequestsText())
 		case COMMAND_CLOSE:
-			result, _ := bot.closeRequest(commandArguments)
-			bot.sendReply(update, result)
+			result, _ := bot.CloseRequest(commandArguments)
+			bot.SendReply(update, result)
 		default:
-			bot.sendReply(update, fmt.Sprintf("I can't understart command '%s'", command))
+			bot.SendReply(update, fmt.Sprintf("I can't understart command '%s'", command))
 		}
 	}
 }

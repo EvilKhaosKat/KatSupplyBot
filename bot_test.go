@@ -15,7 +15,7 @@ const REQUEST_TO_BE_CLOSED = "request to be closed"
 func TestBotRequestsAddOne(t *testing.T) {
 	bot := &Bot{}
 
-	bot.addRequest(REQUEST_ONE)
+	bot.AddRequest(REQUEST_ONE)
 
 	require.Len(t, bot.requests, 1)
 }
@@ -23,8 +23,8 @@ func TestBotRequestsAddOne(t *testing.T) {
 func TestBotRequestsAddMultiple(t *testing.T) {
 	bot := &Bot{}
 
-	bot.addRequest(REQUEST_ONE)
-	bot.addRequest(REQUEST_TWO)
+	bot.AddRequest(REQUEST_ONE)
+	bot.AddRequest(REQUEST_TWO)
 
 	require.Len(t, bot.requests, 2)
 }
@@ -32,10 +32,10 @@ func TestBotRequestsAddMultiple(t *testing.T) {
 func TestBotRequestsToText(t *testing.T) {
 	bot := &Bot{}
 
-	bot.addRequest(REQUEST_ONE)
-	bot.addRequest(REQUEST_TWO)
+	bot.AddRequest(REQUEST_ONE)
+	bot.AddRequest(REQUEST_TWO)
 
-	requestsText := bot.getRequestsText()
+	requestsText := bot.GetRequestsText()
 	t.Log("requestsText:", requestsText)
 
 	require.Contains(t, requestsText, REQUEST_ONE)
@@ -45,12 +45,12 @@ func TestBotRequestsToText(t *testing.T) {
 func TestBotCloseRequest(t *testing.T) {
 	bot := &Bot{}
 
-	bot.addRequest(REQUEST_OPEN)
-	bot.addRequest(REQUEST_TO_BE_CLOSED)
+	bot.AddRequest(REQUEST_OPEN)
+	bot.AddRequest(REQUEST_TO_BE_CLOSED)
 
-	bot.closeRequest("1") //count from 0
+	bot.CloseRequest("1") //count from 0
 
-	requestsText := bot.getRequestsText()
+	requestsText := bot.GetRequestsText()
 	t.Log("requestsText:", requestsText)
 
 	require.Contains(t, requestsText, REQUEST_OPEN)

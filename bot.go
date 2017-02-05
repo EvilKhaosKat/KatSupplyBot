@@ -9,11 +9,11 @@ import (
 )
 
 type BotCommunicationInterface interface {
-	addRequest(requestString string) (string, *Request)
-	getRequestsText() string
-	closeRequest(rawRequestNum string) (string, *Request)
+	AddRequest(requestString string) (string, *Request)
+	GetRequestsText() string
+	CloseRequest(rawRequestNum string) (string, *Request)
 
-	sendReply(update telegramBotApi.Update, text string)
+	SendReply(update telegramBotApi.Update, text string)
 }
 
 type Bot struct {
@@ -34,14 +34,14 @@ func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
 	return updates
 }
 
-func (bot *Bot) sendReply(update telegramBotApi.Update, text string) {
+func (bot *Bot) SendReply(update telegramBotApi.Update, text string) {
 	replyMessage := telegramBotApi.NewMessage(update.Message.Chat.ID, text)
 	replyMessage.ReplyToMessageID = update.Message.MessageID
 
 	bot.botApi.Send(replyMessage)
 }
 
-func (bot *Bot) addRequest(requestString string) (string, *Request) {
+func (bot *Bot) AddRequest(requestString string) (string, *Request) {
 	if len(requestString) == 0 {
 		return "Empty request won't be added", nil
 	}
@@ -52,7 +52,7 @@ func (bot *Bot) addRequest(requestString string) (string, *Request) {
 	return fmt.Sprintf("Request '%s' added", request), request
 }
 
-func (bot *Bot) getRequestsText() string {
+func (bot *Bot) GetRequestsText() string {
 	if len(bot.requests) == 0 {
 		return "No active requests at the moment"
 	}
@@ -68,7 +68,7 @@ func (bot *Bot) getRequestsText() string {
 	return buffer.String()
 }
 
-func (bot *Bot) closeRequest(rawRequestNum string) (string, *Request) {
+func (bot *Bot) CloseRequest(rawRequestNum string) (string, *Request) {
 	if len(rawRequestNum) == 0 {
 		return "Request number to close required", nil
 	}

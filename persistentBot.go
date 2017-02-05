@@ -27,16 +27,16 @@ func (bot *PersistentBot) initRequestsFromDb() {
 	bot.requests = requests
 }
 
-func (bot *PersistentBot) addRequest(requestString string) (string, *Request) {
-	result, request := bot.Bot.addRequest(requestString)
+func (bot *PersistentBot) AddRequest(requestString string) (string, *Request) {
+	result, request := bot.Bot.AddRequest(requestString)
 
 	bot.saveRequestToDb(request)
 
 	return result, request
 }
 
-func (bot *PersistentBot) closeRequest(rawRequestNum string) (string, *Request) {
-	result, request := bot.Bot.closeRequest(rawRequestNum)
+func (bot *PersistentBot) CloseRequest(rawRequestNum string) (string, *Request) {
+	result, request := bot.Bot.CloseRequest(rawRequestNum)
 
 	bot.saveRequestToDb(request)
 

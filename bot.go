@@ -127,7 +127,7 @@ func getBot() *Bot {
 func getPersistentBot() *PersistentBot {
 	bot := getBot()
 
-	persistentBot := PersistentBot{Bot: bot, db: initDb()}
+	persistentBot := PersistentBot{Bot: bot, db: initDb(DB_FILENAME)}
 	persistentBot.init()
 
 	return &persistentBot

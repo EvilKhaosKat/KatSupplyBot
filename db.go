@@ -7,8 +7,8 @@ import (
 
 const DB_FILENAME = "KatSupplyBot.db"
 
-func initDb() *storm.DB {
-	db, err := storm.Open(DB_FILENAME)
+func initDb(dbFilename string) *storm.DB {
+	db, err := storm.Open(dbFilename)
 
 	if err != nil {
 		log.Panic(err)

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-go run main.go bot.go
+go run main.go bot.go persistentBot.go

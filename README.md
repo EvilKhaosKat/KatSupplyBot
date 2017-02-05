@@ -1,2 +1,2 @@
 # KatSupplyBot
-Supply telegram bot - registers supply 'orders' 
+Supply telegram bot - registers supply 'requests' 

@@ -28,4 +28,6 @@ _testmain.go
 *.py[cod]
 *.iml
 
+# project specific files
 token
+KatSupplyBot.db

@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"bytes"
 	"strconv"
+	"github.com/asdine/storm"
 )
 
 type Bot struct {
 	requests []*Request
 	botApi   *telegramBotApi.BotAPI
+
+	db       *storm.DB
 }
 
 func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
@@ -38,10 +41,18 @@ func (bot *Bot) addRequest(requestString string) string {
 		return "Empty request won't be added"
 	}
 
-	request := &Request{name: requestString}
+	request := &Request{Name: requestString}
+
 	bot.requests = append(bot.requests, request)
+	bot.saveRequestToDb(request)
 
 	return fmt.Sprintf("Request '%s' added", request)
+}
+
+func (bot *Bot) saveRequestToDb(request *Request) {
+	if bot.db != nil {
+		bot.db.Save(request)
+	}
 }
 
 func (bot *Bot) getRequestsText() string {
@@ -52,7 +63,7 @@ func (bot *Bot) getRequestsText() string {
 	var buffer bytes.Buffer
 
 	for number, request := range bot.requests {
-		if !request.closed {
+		if !request.Closed {
 			buffer.WriteString(fmt.Sprintf("%d: %s\n", number, request))
 		}
 	}
@@ -75,13 +86,40 @@ func (bot *Bot) closeRequest(rawRequestNum string) string {
 	}
 
 	request := bot.requests[requestNum]
-	if request.closed {
+	if request.Closed {
 		return fmt.Sprintf("Request '%s' is already closed", request)
 	}
 
-	request.closed = true
-	//bot.requests = append(bot.requests[:requestNum], bot.requests[requestNum+1])
+	request.Closed = true
+	bot.saveRequestToDb(request)
+
 	return fmt.Sprintf("Request '%s' closed", request)
+}
+
+func (bot *Bot) FinishWork() {
+	bot.db.Close()
+}
+
+func (bot *Bot) initRequestsFromDb() {
+	var requests []*Request
+
+	err := bot.db.All(&requests)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	bot.requests = requests
+}
+
+func getBotApi(token string) *telegramBotApi.BotAPI {
+	bot, err := telegramBotApi.NewBotAPI(token)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	//bot.Debug = true
+
+	return bot
 }
 
 func getBot() *Bot {
@@ -92,6 +130,8 @@ func getBot() *Bot {
 	botApi := getBotApi(token)
 	log.Printf("Authorized on account %s", botApi.Self.UserName)
 
-	bot := &Bot{botApi: botApi}
+	bot := &Bot{botApi: botApi, db: initDb()}
+	bot.initRequestsFromDb()
+
 	return bot
 }

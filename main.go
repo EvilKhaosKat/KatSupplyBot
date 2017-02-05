@@ -15,8 +15,9 @@ const COMMAND_LIST = "list"
 const COMMAND_CLOSE = "close"
 
 type Request struct {
-	name   string
-	closed bool
+	Id     int `storm:"id,increment"`
+	Name   string
+	Closed bool
 }
 
 
@@ -30,6 +31,8 @@ func main() {
 
 		handleUpdate(update, bot)
 	}
+
+	defer bot.FinishWork()
 }
 
 //Logic of messages handling
@@ -56,25 +59,13 @@ func handleUpdate(update telegramBotApi.Update, bot *Bot) {
 }
 
 func (request Request) String() string {
-	return request.name
-}
-
-func getBotApi(token string) *telegramBotApi.BotAPI {
-	bot, err := telegramBotApi.NewBotAPI(token)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	//bot.Debug = true
-
-	return bot
+	return request.Name
 }
 
 func readTokenFile() string {
 	file, err := os.Open("token")
 	if err != nil {
-		fmt.Println("token file reading error:", err)
-		os.Exit(1)
+		log.Panic("token file reading error:", err)
 	}
 	defer file.Close()
 

@@ -21,6 +21,14 @@ func TestBotRequestsAddOne(t *testing.T) {
 	require.Len(t, bot.Requests, 1)
 }
 
+func TestBotRequestsAddEmpty(t *testing.T) {
+	bot := &Bot{}
+
+	bot.AddRequest("")
+
+	require.Len(t, bot.Requests, 0)
+}
+
 func TestBotRequestsAddMultiple(t *testing.T) {
 	bot := &Bot{}
 

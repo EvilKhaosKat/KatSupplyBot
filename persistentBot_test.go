@@ -35,7 +35,7 @@ func removeTestDbFiles() {
 
 func TestPersistentBotRequestsAddOne(t *testing.T) {
 	bot := getTestPersistentBot(TestDbAddOneFilename)
-	bot.AddRequest(REQUEST_ONE)
+	bot.AddRequest(RequestOne)
 	bot.FinishWork()
 
 	bot = getTestPersistentBot(TestDbAddOneFilename)
@@ -45,8 +45,8 @@ func TestPersistentBotRequestsAddOne(t *testing.T) {
 
 func TestPersistentBotRequestsAddMultiple(t *testing.T) {
 	bot := getTestPersistentBot(TestDbAddMultipleFilename)
-	bot.AddRequest(REQUEST_ONE)
-	bot.AddRequest(REQUEST_TWO)
+	bot.AddRequest(RequestOne)
+	bot.AddRequest(RequestTwo)
 	bot.FinishWork()
 
 	bot = getTestPersistentBot(TestDbAddMultipleFilename)
@@ -56,8 +56,8 @@ func TestPersistentBotRequestsAddMultiple(t *testing.T) {
 
 func TestPersistentBotRequestsToText(t *testing.T) {
 	bot := getTestPersistentBot(TestDbRequestsToTextFilename)
-	bot.AddRequest(REQUEST_ONE)
-	bot.AddRequest(REQUEST_TWO)
+	bot.AddRequest(RequestOne)
+	bot.AddRequest(RequestTwo)
 	bot.FinishWork()
 
 	bot = getTestPersistentBot(TestDbRequestsToTextFilename)
@@ -65,14 +65,14 @@ func TestPersistentBotRequestsToText(t *testing.T) {
 	requestsText := bot.GetRequestsText()
 	t.Log("requestsText:", requestsText)
 
-	require.Contains(t, requestsText, REQUEST_ONE)
-	require.Contains(t, requestsText, REQUEST_TWO)
+	require.Contains(t, requestsText, RequestOne)
+	require.Contains(t, requestsText, RequestTwo)
 }
 
 func TestPersistentBotCloseRequest(t *testing.T) {
 	bot := getTestPersistentBot(TestDbCloseRequestFilename)
-	bot.AddRequest(REQUEST_OPEN)
-	bot.AddRequest(REQUEST_TO_BE_CLOSED)
+	bot.AddRequest(RequestOpen)
+	bot.AddRequest(RequestToBeClosed)
 	bot.FinishWork()
 
 	bot = getTestPersistentBot(TestDbCloseRequestFilename)
@@ -82,6 +82,6 @@ func TestPersistentBotCloseRequest(t *testing.T) {
 	requestsText := bot.GetRequestsText()
 	t.Log("requestsText:", requestsText)
 
-	require.Contains(t, requestsText, REQUEST_OPEN)
-	require.NotContains(t, requestsText, REQUEST_TO_BE_CLOSED)
+	require.Contains(t, requestsText, RequestOpen)
+	require.NotContains(t, requestsText, RequestToBeClosed)
 }

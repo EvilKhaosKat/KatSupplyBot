@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 const REQUEST_ONE = "request one"
@@ -17,7 +17,7 @@ func TestBotRequestsAddOne(t *testing.T) {
 
 	bot.AddRequest(REQUEST_ONE)
 
-	require.Len(t, bot.requests, 1)
+	require.Len(t, bot.Requests, 1)
 }
 
 func TestBotRequestsAddMultiple(t *testing.T) {
@@ -26,7 +26,7 @@ func TestBotRequestsAddMultiple(t *testing.T) {
 	bot.AddRequest(REQUEST_ONE)
 	bot.AddRequest(REQUEST_TWO)
 
-	require.Len(t, bot.requests, 2)
+	require.Len(t, bot.Requests, 2)
 }
 
 func TestBotRequestsToText(t *testing.T) {

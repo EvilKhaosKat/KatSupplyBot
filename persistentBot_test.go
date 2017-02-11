@@ -14,7 +14,7 @@ const TestDbCloseRequestFilename = "TestPersistentBotCloseRequest_test.db"
 
 func getTestPersistentBot(testDbFilename string) *PersistentBot {
 	bot := PersistentBot{Bot: &Bot{}, db: initDb(testDbFilename)}
-	bot.init()
+	bot.Init()
 
 	return &bot
 }
@@ -40,7 +40,7 @@ func TestPersistentBotRequestsAddOne(t *testing.T) {
 
 	bot = getTestPersistentBot(TestDbAddOneFilename)
 
-	require.Len(t, bot.requests, 1)
+	require.Len(t, bot.Requests, 1)
 }
 
 func TestPersistentBotRequestsAddMultiple(t *testing.T) {
@@ -51,7 +51,7 @@ func TestPersistentBotRequestsAddMultiple(t *testing.T) {
 
 	bot = getTestPersistentBot(TestDbAddMultipleFilename)
 
-	require.Len(t, bot.requests, 2)
+	require.Len(t, bot.Requests, 2)
 }
 
 func TestPersistentBotRequestsToText(t *testing.T) {

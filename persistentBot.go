@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/asdine/storm"
 	"log"
+
+	"github.com/asdine/storm"
 )
 
 type PersistentBot struct {
@@ -11,8 +12,8 @@ type PersistentBot struct {
 	db *storm.DB
 }
 
-func (bot *PersistentBot) init() {
-	bot.Bot.init()
+func (bot *PersistentBot) Init() {
+	bot.Bot.Init()
 
 	bot.initRequestsFromDb()
 	log.Println("Persistent Bot initialization")
@@ -24,7 +25,7 @@ func (bot *PersistentBot) initRequestsFromDb() {
 	if err != nil {
 		log.Panic(err)
 	}
-	bot.requests = requests
+	bot.Requests = requests
 }
 
 func (bot *PersistentBot) AddRequest(requestString string) (string, *Request) {

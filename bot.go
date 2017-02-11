@@ -17,8 +17,11 @@ type BotCommunicationInterface interface {
 	SendReply(update telegramBotApi.Update, text string)
 }
 
+//Bot represents Bot entity, associated with telegramBotApi
+//After creating an exemplar it's highly recommended to call #Init method
+//At the end of work it's highly recommended to call #FinishWork method
 type Bot struct {
-	requests []*Request
+	Requests []*Request
 	botApi   *telegramBotApi.BotAPI
 }
 
@@ -48,19 +51,19 @@ func (bot *Bot) AddRequest(requestString string) (string, *Request) {
 	}
 
 	request := &Request{Name: requestString}
-	bot.requests = append(bot.requests, request)
+	bot.Requests = append(bot.Requests, request)
 
 	return fmt.Sprintf("Request '%s' added", request), request
 }
 
 func (bot *Bot) GetRequestsText() string {
-	if len(bot.requests) == 0 {
+	if len(bot.Requests) == 0 {
 		return "No active requests at the moment"
 	}
 
 	var buffer bytes.Buffer
 
-	for number, request := range bot.requests {
+	for number, request := range bot.Requests {
 		if !request.Closed {
 			buffer.WriteString(fmt.Sprintf("%d: %s\n", number, request))
 		}
@@ -79,11 +82,11 @@ func (bot *Bot) CloseRequest(rawRequestNum string) (string, *Request) {
 		return fmt.Sprintf("Request number to close required, but got error: %s", err.Error()), nil
 	}
 
-	if requestNum < 0 || requestNum > len(bot.requests) {
+	if requestNum < 0 || requestNum > len(bot.Requests) {
 		return "Incorrect request number", nil
 	}
 
-	request := bot.requests[requestNum]
+	request := bot.Requests[requestNum]
 	if request.Closed {
 		return fmt.Sprintf("Request '%s' is already closed", request), nil
 	}
@@ -97,7 +100,7 @@ func (bot *Bot) FinishWork() {
 	log.Println("Bot finishes it's work")
 }
 
-func (bot *Bot) init() {
+func (bot *Bot) Init() {
 	log.Println("Bot initialization")
 }
 
@@ -129,7 +132,7 @@ func getPersistentBot() *PersistentBot {
 	bot := getBot()
 
 	persistentBot := PersistentBot{Bot: bot, db: initDb(DB_FILENAME)}
-	persistentBot.init()
+	persistentBot.Init()
 
 	return &persistentBot
 }

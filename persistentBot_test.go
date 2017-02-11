@@ -1,19 +1,19 @@
 package main
 
 import (
-	"testing"
-	"github.com/stretchr/testify/require"
 	"os"
+	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
-const TEST_DB_ADD_ONE_FILENAME = "TestPersistentBotRequestsAddOne_test.db"
-const TEST_DB_ADD_MULTIPLE_FILENAME = "TestPersistentBotRequestsAddMultiple_test.db"
-const TEST_DB_REQUESTS_TO_TEXT_FILENAME = "TestPersistentBotRequestsToText_test.db"
-const TEST_DB_CLOSE_REQUEST_FILENAME = "TestPersistentBotCloseRequest_test.db"
-
+const TestDbAddOneFilename = "TestPersistentBotRequestsAddOne_test.db"
+const TestDbAddMultipleFilename = "TestPersistentBotRequestsAddMultiple_test.db"
+const TestDbRequestsToTextFilename = "TestPersistentBotRequestsToText_test.db"
+const TestDbCloseRequestFilename = "TestPersistentBotCloseRequest_test.db"
 
 func getTestPersistentBot(testDbFilename string) *PersistentBot {
-	bot := PersistentBot{Bot:&Bot{}, db: initDb(testDbFilename)}
+	bot := PersistentBot{Bot: &Bot{}, db: initDb(testDbFilename)}
 	bot.init()
 
 	return &bot
@@ -27,40 +27,40 @@ func TestMain(m *testing.M) {
 }
 
 func removeTestDbFiles() {
-	os.Remove(TEST_DB_ADD_ONE_FILENAME)
-	os.Remove(TEST_DB_ADD_MULTIPLE_FILENAME)
-	os.Remove(TEST_DB_REQUESTS_TO_TEXT_FILENAME)
-	os.Remove(TEST_DB_CLOSE_REQUEST_FILENAME)
+	os.Remove(TestDbAddOneFilename)
+	os.Remove(TestDbAddMultipleFilename)
+	os.Remove(TestDbRequestsToTextFilename)
+	os.Remove(TestDbCloseRequestFilename)
 }
 
 func TestPersistentBotRequestsAddOne(t *testing.T) {
-	bot := getTestPersistentBot(TEST_DB_ADD_ONE_FILENAME)
+	bot := getTestPersistentBot(TestDbAddOneFilename)
 	bot.AddRequest(REQUEST_ONE)
 	bot.FinishWork()
 
-	bot = getTestPersistentBot(TEST_DB_ADD_ONE_FILENAME)
+	bot = getTestPersistentBot(TestDbAddOneFilename)
 
 	require.Len(t, bot.requests, 1)
 }
 
 func TestPersistentBotRequestsAddMultiple(t *testing.T) {
-	bot := getTestPersistentBot(TEST_DB_ADD_MULTIPLE_FILENAME)
+	bot := getTestPersistentBot(TestDbAddMultipleFilename)
 	bot.AddRequest(REQUEST_ONE)
 	bot.AddRequest(REQUEST_TWO)
 	bot.FinishWork()
 
-	bot = getTestPersistentBot(TEST_DB_ADD_MULTIPLE_FILENAME)
+	bot = getTestPersistentBot(TestDbAddMultipleFilename)
 
 	require.Len(t, bot.requests, 2)
 }
 
 func TestPersistentBotRequestsToText(t *testing.T) {
-	bot := getTestPersistentBot(TEST_DB_REQUESTS_TO_TEXT_FILENAME)
+	bot := getTestPersistentBot(TestDbRequestsToTextFilename)
 	bot.AddRequest(REQUEST_ONE)
 	bot.AddRequest(REQUEST_TWO)
 	bot.FinishWork()
 
-	bot = getTestPersistentBot(TEST_DB_REQUESTS_TO_TEXT_FILENAME)
+	bot = getTestPersistentBot(TestDbRequestsToTextFilename)
 
 	requestsText := bot.GetRequestsText()
 	t.Log("requestsText:", requestsText)
@@ -70,12 +70,12 @@ func TestPersistentBotRequestsToText(t *testing.T) {
 }
 
 func TestPersistentBotCloseRequest(t *testing.T) {
-	bot := getTestPersistentBot(TEST_DB_CLOSE_REQUEST_FILENAME)
+	bot := getTestPersistentBot(TestDbCloseRequestFilename)
 	bot.AddRequest(REQUEST_OPEN)
 	bot.AddRequest(REQUEST_TO_BE_CLOSED)
 	bot.FinishWork()
 
-	bot = getTestPersistentBot(TEST_DB_CLOSE_REQUEST_FILENAME)
+	bot = getTestPersistentBot(TestDbCloseRequestFilename)
 
 	bot.CloseRequest("1") //count from 0
 

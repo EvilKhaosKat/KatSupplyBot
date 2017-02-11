@@ -3,23 +3,24 @@ package main
 import (
 	"bufio"
 	"fmt"
-	telegramBotApi "gopkg.in/telegram-bot-api.v4"
 	"log"
 	"os"
+
+	telegramBotApi "gopkg.in/telegram-bot-api.v4"
 )
 
-const UPDATES_TIMEOUT = 60
+//UpdatesTimeout Telegram API poll timeout
+const UpdatesTimeout = 60
 
-const COMMAND_ADD = "add"
-const COMMAND_LIST = "list"
-const COMMAND_CLOSE = "close"
+const CommandAdd = "add"
+const CommandList = "list"
+const CommandClose = "close"
 
 type Request struct {
-	Id     int `storm:"id,increment"`
+	ID     int `storm:"id,increment"`
 	Name   string
 	Closed bool
 }
-
 
 func main() {
 	bot := getPersistentBot()
@@ -44,12 +45,12 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 		commandArguments := message.CommandArguments()
 
 		switch command := message.Command(); command {
-		case COMMAND_ADD:
+		case CommandAdd:
 			result, _ := bot.AddRequest(commandArguments)
 			bot.SendReply(update, result)
-		case COMMAND_LIST:
+		case CommandList:
 			bot.SendReply(update, bot.GetRequestsText())
-		case COMMAND_CLOSE:
+		case CommandClose:
 			result, _ := bot.CloseRequest(commandArguments)
 			bot.SendReply(update, result)
 		default:

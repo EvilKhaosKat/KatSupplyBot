@@ -1,11 +1,12 @@
 package main
 
 import (
-	telegramBotApi "gopkg.in/telegram-bot-api.v4"
-	"log"
-	"fmt"
 	"bytes"
+	"fmt"
+	"log"
 	"strconv"
+
+	telegramBotApi "gopkg.in/telegram-bot-api.v4"
 )
 
 type BotCommunicationInterface interface {
@@ -24,7 +25,7 @@ type Bot struct {
 func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
 	u := telegramBotApi.NewUpdate(0)
 
-	u.Timeout = UPDATES_TIMEOUT
+	u.Timeout = UpdatesTimeout
 
 	updates, err := bot.botApi.GetUpdatesChan(u)
 	if err != nil {

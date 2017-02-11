@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/asdine/storm"
 	"log"
+
+	"github.com/asdine/storm"
 )
 
 const DB_FILENAME = "KatSupplyBot.db"

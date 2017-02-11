@@ -17,9 +17,9 @@ type BotCommunicationInterface interface {
 	SendReply(update telegramBotApi.Update, text string)
 }
 
-//Bot represents Bot entity, associated with telegramBotApi
-//After creating an exemplar it's highly recommended to call #Init method
-//At the end of work it's highly recommended to call #FinishWork method
+//Bot represents Bot entity, associated with telegramBotApi.
+//After creating an exemplar it's highly recommended to call #Init method.
+//At the end of work it's highly recommended to call #FinishWork method.
 type Bot struct {
 	Requests []*Request
 	botApi   *telegramBotApi.BotAPI

@@ -6,6 +6,8 @@ import (
 	"github.com/asdine/storm"
 )
 
+//PersistentBot extends original Bot struct by adding persistence of requests
+//using BoltDB and Storm ORM
 type PersistentBot struct {
 	*Bot
 

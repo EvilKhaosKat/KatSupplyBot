@@ -17,12 +17,14 @@ type BotCommunicationInterface interface {
 	SendReply(update telegramBotApi.Update, text string)
 }
 
-//Bot represents Bot entity, associated with telegramBotApi.
+//Bot represents entity, associated with telegramBotApi.
 //After creating an exemplar it's highly recommended to call #Init method.
 //At the end of work it's highly recommended to call #FinishWork method.
+//
+//see also #GetTelegramBotApi
 type Bot struct {
 	Requests []*Request
-	botApi   *telegramBotApi.BotAPI
+	botAPI   *telegramBotApi.BotAPI
 }
 
 func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
@@ -30,7 +32,7 @@ func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
 
 	u.Timeout = UpdatesTimeout
 
-	updates, err := bot.botApi.GetUpdatesChan(u)
+	updates, err := bot.botAPI.GetUpdatesChan(u)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -42,7 +44,7 @@ func (bot *Bot) SendReply(update telegramBotApi.Update, text string) {
 	replyMessage := telegramBotApi.NewMessage(update.Message.Chat.ID, text)
 	replyMessage.ReplyToMessageID = update.Message.MessageID
 
-	bot.botApi.Send(replyMessage)
+	bot.botAPI.Send(replyMessage)
 }
 
 func (bot *Bot) AddRequest(requestString string) (string, *Request) {
@@ -104,15 +106,15 @@ func (bot *Bot) Init() {
 	log.Println("Bot initialization")
 }
 
-func getBotApi(token string) *telegramBotApi.BotAPI {
-	bot, err := telegramBotApi.NewBotAPI(token)
+func GetTelegramBotApi(token string) *telegramBotApi.BotAPI {
+	botAPI, err := telegramBotApi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	//bot.Debug = true
+	//botAPI.Debug = true
 
-	return bot
+	return botAPI
 }
 
 func getBot() *Bot {
@@ -120,10 +122,10 @@ func getBot() *Bot {
 	token := readTokenFile()
 	log.Println("Token acquired")
 
-	botApi := getBotApi(token)
+	botApi := GetTelegramBotApi(token)
 	log.Printf("Authorized on account %s", botApi.Self.UserName)
 
-	bot := &Bot{botApi: botApi}
+	bot := &Bot{botAPI: botApi}
 
 	return bot
 }

@@ -65,3 +65,16 @@ func TestBotCloseRequest(t *testing.T) {
 	require.Contains(t, requestsText, RequestOpen)
 	require.NotContains(t, requestsText, RequestToBeClosed)
 }
+
+func TestBotNoOpenRequestsText(t *testing.T) {
+	bot := &Bot{}
+
+	bot.AddRequest(RequestToBeClosed)
+
+	bot.CloseRequest("0") //count from 0
+
+	requestsText := bot.GetRequestsText()
+	t.Log("requestsText:", requestsText)
+
+	require.Contains(t, requestsText, "No active requests at the moment")
+}

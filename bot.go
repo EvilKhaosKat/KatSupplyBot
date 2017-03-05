@@ -59,7 +59,7 @@ func (bot *Bot) AddRequest(requestString string) (string, *Request) {
 }
 
 func (bot *Bot) GetRequestsText() string {
-	if checkNoOpenRequests(bot) {
+	if !hasOpenRequests(bot) {
 		return "No active requests at the moment"
 	}
 
@@ -73,8 +73,14 @@ func (bot *Bot) GetRequestsText() string {
 
 	return buffer.String()
 }
-func checkNoOpenRequests(bot *Bot) bool {
-	return len(bot.Requests) == 0
+func hasOpenRequests(bot *Bot) bool {
+	for _, request := range bot.Requests {
+		if !request.Closed {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (bot *Bot) CloseRequest(rawRequestNum string) (string, *Request) {

@@ -53,10 +53,10 @@ func (bot *PersistentBot) saveRequestToDb(request *Request) {
 }
 
 func (bot *PersistentBot) FinishWork() {
-	bot.Bot.FinishWork()
-
 	bot.db.Close()
 	log.Println("Persistent Bot finishes it's work")
+
+	bot.Bot.FinishWork()
 }
 
 func getPersistentBot() *PersistentBot {
@@ -66,4 +66,10 @@ func getPersistentBot() *PersistentBot {
 	persistentBot.Init()
 
 	return &persistentBot
+}
+
+func (bot *PersistentBot) Shutdown() {
+	bot.FinishWork()
+
+	bot.Bot.Shutdown()
 }

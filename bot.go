@@ -168,7 +168,7 @@ func (bot *Bot) initAdminsInfo() []string {
 }
 
 func (bot *Bot) IsAdmin(username string) bool {
-	for _, adminUsername := range bot.admins{
+	for _, adminUsername := range bot.admins {
 		if username == adminUsername {
 			return true
 		}
@@ -178,5 +178,7 @@ func (bot *Bot) IsAdmin(username string) bool {
 }
 
 func (bot *Bot) Shutdown() {
+	bot.FinishWork()
+
 	os.Exit(0)
 }

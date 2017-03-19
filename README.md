@@ -8,6 +8,10 @@ Supply telegram bot - registers supply 'requests'
 - call ./launch.sh
 
 ### Current commands:
+#### For all users:
 - /add - Add supply request, for instance "/add купить лимон"
 - /list - Show all current requests
 - /close - Close request
+
+#### Admins only:
+- /shutdown - Shutdown bot instance

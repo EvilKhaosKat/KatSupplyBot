@@ -12,6 +12,8 @@ type PersistentBot struct {
 	*Bot
 
 	db *storm.DB
+
+	workFinished bool
 }
 
 func (bot *PersistentBot) Init() {
@@ -53,10 +55,14 @@ func (bot *PersistentBot) saveRequestToDb(request *Request) {
 }
 
 func (bot *PersistentBot) FinishWork() {
-	bot.db.Close()
-	log.Println("Persistent Bot finishes it's work")
+	if !bot.workFinished {
+		bot.db.Close()
+		log.Println("Persistent Bot finishes it's work")
 
-	bot.Bot.FinishWork()
+		bot.Bot.FinishWork()
+
+		bot.workFinished = true
+	}
 }
 
 func getPersistentBot() *PersistentBot {

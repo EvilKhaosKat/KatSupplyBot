@@ -32,6 +32,8 @@ type Bot struct {
 	Requests []*Request
 	botAPI   *telegramBotApi.BotAPI
 	admins   []string
+
+	workFinished bool
 }
 
 func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
@@ -115,7 +117,11 @@ func (bot *Bot) CloseRequest(rawRequestNum string) (string, *Request) {
 }
 
 func (bot *Bot) FinishWork() {
-	log.Println("Bot finishes it's work")
+	if !bot.workFinished {
+		log.Println("Bot finishes it's work")
+
+		bot.workFinished = true
+	}
 }
 
 func (bot *Bot) Init() {

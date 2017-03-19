@@ -12,9 +12,13 @@ import (
 )
 
 type BotCommunicationInterface interface {
+	IsAdmin(username string) bool
+
 	AddRequest(requestString string) (string, *Request)
 	GetRequestsText() string
 	CloseRequest(rawRequestNum string) (string, *Request)
+
+	Shutdown()
 
 	SendReply(update telegramBotApi.Update, text string)
 }
@@ -116,8 +120,9 @@ func (bot *Bot) FinishWork() {
 
 func (bot *Bot) Init() {
 	log.Println("Bot initialization")
+
 	bot.admins = bot.initAdminsInfo()
-	log.Println(bot.admins)
+	log.Println("admins list:", bot.admins)
 }
 
 func GetTelegramBotApi(token string) *telegramBotApi.BotAPI {
@@ -160,4 +165,18 @@ func (bot *Bot) initAdminsInfo() []string {
 	}
 
 	return admins
+}
+
+func (bot *Bot) IsAdmin(username string) bool {
+	for _, adminUsername := range bot.admins{
+		if username == adminUsername {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (bot *Bot) Shutdown() {
+	os.Exit(0)
 }

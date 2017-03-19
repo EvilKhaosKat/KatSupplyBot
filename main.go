@@ -15,6 +15,7 @@ const UpdatesTimeout = 60
 const CommandAdd = "add"
 const CommandList = "list"
 const CommandClose = "close"
+const CommandShutdown = "shutdown"
 
 type Request struct {
 	ID     int `storm:"id,increment"`
@@ -44,6 +45,7 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 	if message.IsCommand() {
 		commandArguments := message.CommandArguments()
 
+
 		switch command := message.Command(); command {
 		case CommandAdd:
 			result, _ := bot.AddRequest(commandArguments)
@@ -53,6 +55,16 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 		case CommandClose:
 			result, _ := bot.CloseRequest(commandArguments)
 			bot.SendReply(update, result)
+		case CommandShutdown:
+			username := message.From.UserName
+			if bot.IsAdmin(username) {
+				log.Printf("Shutdown initiated by '%s' ", username)
+
+				bot.SendReply(update, "Shutdown initiated")
+				bot.Shutdown()
+			} else {
+				bot.SendReply(update, "You are not authorized to perform shutdown command")
+			}
 		default:
 			bot.SendReply(update, fmt.Sprintf("I can't understart command '%s'", command))
 		}

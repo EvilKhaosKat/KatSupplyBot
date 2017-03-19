@@ -32,3 +32,4 @@ _testmain.go
 token
 *.db
 *.lock
+admins

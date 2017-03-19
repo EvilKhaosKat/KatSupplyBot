@@ -7,6 +7,8 @@ import (
 	"strconv"
 
 	telegramBotApi "gopkg.in/telegram-bot-api.v4"
+	"os"
+	"bufio"
 )
 
 type BotCommunicationInterface interface {
@@ -25,6 +27,7 @@ type BotCommunicationInterface interface {
 type Bot struct {
 	Requests []*Request
 	botAPI   *telegramBotApi.BotAPI
+	admins   []string
 }
 
 func (bot *Bot) getUpdatesChan() <-chan telegramBotApi.Update {
@@ -113,6 +116,8 @@ func (bot *Bot) FinishWork() {
 
 func (bot *Bot) Init() {
 	log.Println("Bot initialization")
+	bot.admins = bot.initAdminsInfo()
+	log.Println(bot.admins)
 }
 
 func GetTelegramBotApi(token string) *telegramBotApi.BotAPI {
@@ -139,11 +144,20 @@ func getBot() *Bot {
 	return bot
 }
 
-func getPersistentBot() *PersistentBot {
-	bot := getBot()
+func (bot *Bot) initAdminsInfo() []string {
+	file, err := os.Open("admins")
+	if err != nil {
+		log.Println("admins file reading error:", err)
+		return []string{}
+	}
+	defer file.Close()
 
-	persistentBot := PersistentBot{Bot: bot, db: initDb(DB_FILENAME)}
-	persistentBot.Init()
+	admins := []string{}
 
-	return &persistentBot
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		admins = append(admins, scanner.Text())
+	}
+
+	return admins
 }

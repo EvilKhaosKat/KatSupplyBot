@@ -58,3 +58,12 @@ func (bot *PersistentBot) FinishWork() {
 	bot.db.Close()
 	log.Println("Persistent Bot finishes it's work")
 }
+
+func getPersistentBot() *PersistentBot {
+	bot := getBot()
+
+	persistentBot := PersistentBot{Bot: bot, db: initDb(DB_FILENAME)}
+	persistentBot.Init()
+
+	return &persistentBot
+}

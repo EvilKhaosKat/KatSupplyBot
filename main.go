@@ -66,7 +66,7 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 				bot.SendReply(update, "You are not authorized to perform shutdown command")
 			}
 		default:
-			bot.SendReply(update, fmt.Sprintf("I can't understart command '%s'", command))
+			bot.SendReply(update, fmt.Sprintf("I can't understand command '%s'", command))
 		}
 	}
 }

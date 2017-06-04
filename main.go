@@ -46,7 +46,7 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 	if message.IsCommand() {
 		commandArguments := message.CommandArguments()
 
-		switch command := strings.ToLower(message.Command()); command {
+		switch command := message.Command(); strings.ToLower(command) {
 		case CommandAdd:
 			result, _ := bot.AddRequest(commandArguments)
 			bot.SendReply(update, result)

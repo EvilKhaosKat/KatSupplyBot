@@ -7,6 +7,7 @@ import (
 	"os"
 
 	telegramBotApi "gopkg.in/telegram-bot-api.v4"
+	"strings"
 )
 
 //UpdatesTimeout Telegram API poll timeout
@@ -45,8 +46,7 @@ func handleUpdate(update telegramBotApi.Update, bot BotCommunicationInterface) {
 	if message.IsCommand() {
 		commandArguments := message.CommandArguments()
 
-
-		switch command := message.Command(); command {
+		switch command := strings.ToLower(message.Command()); command {
 		case CommandAdd:
 			result, _ := bot.AddRequest(commandArguments)
 			bot.SendReply(update, result)

@@ -24,4 +24,4 @@ Supply telegram bot - registers supply 'requests'
 - `/close` - Close request
 
 #### Admins only:
-- /shutdown - Shutdown bot instance
+- `/shutdown` - Shutdown bot instance

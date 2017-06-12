@@ -3,9 +3,17 @@ Supply telegram bot - registers supply 'requests'
 
 
 ### How to use:
-- create 'token' file with bot token (can be obtained from 'Bot father')
-- optional - create 'admins' file, with admins usernames (each one on different line)
-- call ./launch.sh
+- create `token` file with bot token (can be obtained from 'Bot father')
+- optional - create `admins` file, with admins usernames (each one on different line)
+- to use local app exemplar
+    - call `./launch.sh`
+- to use docker container
+    - call `./create_docker_image.sh` to create image using `Dockerfile`, 
+    and tag it with `katsupplybot`
+    - call `./run_docker_container.sh` to create and run docker container named `KatSupplyBot`
+    - p.s.:
+        - if `KatSupplyBot` container exists, it can be started again by calling `./start_docker_container.sh`
+        - you can watch logs by calling `docker logs KatSupplyBot`
 
 ### Current commands:
 #### For all users:
